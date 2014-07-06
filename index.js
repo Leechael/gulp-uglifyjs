@@ -142,11 +142,17 @@ module.exports = function(filename, options) {
     this.push(compressedFile);
 
     if (options.outSourceMap) {
+      var map = options.output.source_map.get();
+      for (var k in map._sources._array) {
+        var fn = map._sources._array[k].split(path.sep)
+        map._sources._array[k] = fn[fn.length - 1]
+      }
+
       var sourceMap = new File({
         cwd: baseFile.cwd,
         base: baseFile.base,
         path: path.join(baseFile.base, options.outSourceMap),
-        contents: new Buffer(options.output.source_map.toString())
+        contents: new Buffer(map.toString())
       });
 
       this.push(sourceMap);
